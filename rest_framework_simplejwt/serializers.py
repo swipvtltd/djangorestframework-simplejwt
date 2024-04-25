@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 from .models import TokenUser
 from .settings import api_settings
 from .tokens import RefreshToken, SlidingToken, Token, UntypedToken
+from users.models import Profile
 
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
@@ -63,7 +64,13 @@ class TokenObtainSerializer(serializers.Serializer):
 
     @classmethod
     def get_token(cls, user: AuthUser) -> Token:
-        return cls.token_class.for_user(user)  # type: ignore
+        token = cls.token_class.for_user(user)  # type: ignore
+        token["username"] = user.username
+        token["user_id"] = user.id
+        token["org_id"] = Profile.objects.filter(user=user).values_list('org_id', flat=True).first()
+        token["short_name"] = Profile.objects.filter(user=user).values_list('short_name', flat=True).first()
+        token["email"] = user.email
+        return token
 
 
 class TokenObtainPairSerializer(TokenObtainSerializer):
@@ -71,15 +78,15 @@ class TokenObtainPairSerializer(TokenObtainSerializer):
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
-
         refresh = self.get_token(self.user)
-
         data["refresh"] = str(refresh)
-        data["access"] = str(refresh.access_token)
-
+        data["token"] = str(refresh.access_token)
+        data["user_id"] = self.user.id
+        data["org_id"] = Profile.objects.filter(user=self.user).values_list('org_id', flat=True).first()
+        data["short_name"] = Profile.objects.filter(user=self.user).values_list('short_name', flat=True).first()
+        data["is_superuser"] = self.user.is_superuser
         if api_settings.UPDATE_LAST_LOGIN:
             update_last_login(None, self.user)
-
         return data
 
 
