@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from .models import TokenUser
 from .settings import api_settings
 from .tokens import RefreshToken, SlidingToken, Token, UntypedToken
-from users.models import Profile
+from subscription.models import Profile
 
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
