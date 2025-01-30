@@ -10,7 +10,8 @@ from rest_framework.exceptions import ValidationError
 from .models import TokenUser
 from .settings import api_settings
 from .tokens import RefreshToken, SlidingToken, Token, UntypedToken
-from subscription.models import Profile
+# from subscription.models import Profile
+from gva_shared_config.models_config.models import Profile
 
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
