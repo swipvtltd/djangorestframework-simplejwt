@@ -84,6 +84,7 @@ class TokenObtainPairSerializer(TokenObtainSerializer):
         data["token"] = str(refresh.access_token)
         data["user_id"] = self.user.id
         data["org_id"] = Profile.objects.filter(user=self.user).values_list('org_id', flat=True).first()
+        data["org_name"] = Profile.objects.get(user=self.user).org_id.org_name
         data["short_name"] = Profile.objects.filter(user=self.user).values_list('short_name', flat=True).first()
         data["is_superuser"] = self.user.is_superuser
         if api_settings.UPDATE_LAST_LOGIN:
