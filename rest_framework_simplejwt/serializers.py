@@ -10,8 +10,8 @@ from rest_framework.exceptions import ValidationError
 from .models import TokenUser
 from .settings import api_settings
 from .tokens import RefreshToken, SlidingToken, Token, UntypedToken
-from gva_shared_config.models import Profile, OrgMaster
-
+# from gva_shared_config.models import Profile, OrgMaster
+from gva_shared_config.models_config.models import Profile, OrgMaster
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
 if api_settings.BLACKLIST_AFTER_ROTATION:
